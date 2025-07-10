@@ -1,6 +1,6 @@
 {
   "name": "mcp-node-tool",
-  "version": "2.1.0",
+  "version": "0.0.2",
   "type": "module",
   "description": "基于MCP规范实现的系统信息获取工具",
   "main": "index.js",
