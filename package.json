@@ -1,0 +1,31 @@
+{
+  "name": "mcp-node-tool",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "基于MCP规范实现的系统信息获取工具",
+  "main": "index.js",
+  "bin": {
+    "mcp-system-info": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "system-info",
+    "system-monitoring",
+    "ai-tools"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "systeminformation": "^5.27.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
