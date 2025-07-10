@@ -47,28 +47,27 @@ The server provides 2 streamlined MCP tools:
 
 ## 📝 Configuration
 
-### Cursor Configuration
-Add to your Cursor `settings.json`:
+### MacOS / Linux
+
 ```json
 {
-  "mcp.servers": {
+  "mcpServers": {
     "system-info": {
-      "command": "node",
-      "args": ["/path/to/mcp-node-tool/index.js"],
-      "cwd": "/path/to/mcp-node-tool"
+      "command": "npx",
+      "args": ["npx", "-y", "mcp-system-info"]
     }
   }
 }
 ```
 
-### Claude Desktop Configuration
-Add to Claude Desktop config:
+### windows
+
 ```json
 {
   "mcpServers": {
     "system-info": {
-      "command": "node",
-      "args": ["/path/to/mcp-node-tool/index.js"]
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "mcp-system-info"]
     }
   }
 }

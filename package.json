@@ -1,5 +1,5 @@
 {
-  "name": "mcp-node-tool",
+  "name": "mcp-system-info",
   "version": "0.2.0",
   "type": "module",
   "description": "基于MCP规范实现的系统信息获取工具",
@@ -36,12 +36,11 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryan/mcp-node-tool.git"
+    "url": "git+https://github.com/cooderamily/system-tool-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/ryan/mcp-node-tool/issues"
+    "url": "https://github.com/cooderamily/system-tool-mcp/issues"
   },
-  "homepage": "https://github.com/ryan/mcp-node-tool#readme",
   "files": [
     "index.js",
     "README.md",
