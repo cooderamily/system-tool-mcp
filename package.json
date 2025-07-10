@@ -10,22 +10,53 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "prepack": "npm test",
+    "prepublishOnly": "npm test",
+    "version:patch": "npm version patch && git push --follow-tags",
+    "version:minor": "npm version minor && git push --follow-tags",
+    "version:major": "npm version major && git push --follow-tags",
+    "publish:dry": "npm publish --dry-run",
+    "publish:npm": "npm publish",
+    "release:patch": "npm run version:patch && npm run publish:npm",
+    "release:minor": "npm run version:minor && npm run publish:npm",
+    "release:major": "npm run version:major && npm run publish:npm",
+    "release": "node release.js"
   },
   "keywords": [
     "mcp",
     "model-context-protocol",
     "system-info",
     "system-monitoring",
-    "ai-tools"
+    "ai-tools",
+    "nodejs",
+    "system-administration"
   ],
-  "author": "",
+  "author": "Ryan",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryan/mcp-node-tool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryan/mcp-node-tool/issues"
+  },
+  "homepage": "https://github.com/ryan/mcp-node-tool#readme",
+  "files": [
+    "index.js",
+    "README.md",
+    "package.json",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
     "systeminformation": "^5.27.7"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

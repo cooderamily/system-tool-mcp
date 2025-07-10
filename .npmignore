@@ -1,0 +1,20 @@
+# 打包时忽略的文件
+node_modules/
+.github/
+.git/
+.gitignore
+*.log
+test.js
+release.js
+.env
+.env.*
+coverage/
+*.tgz
+.nyc_output/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
