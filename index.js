@@ -9,138 +9,159 @@ const formatPercent = (value) => `${value.toFixed(1)}%`;
 const formatGHz = (speed) => `${speed}GHz`;
 
 const createResponse = (title, data) => ({
-  content: [{
-    type: "text",
-    text: `# ${title}\n\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``,
-  }],
+  content: [
+    {
+      type: "text",
+      text: `# ${title}\n\n\`\`\`json\n${JSON.stringify(
+        data,
+        null,
+        2
+      )}\n\`\`\``,
+    },
+  ],
 });
 
 const getHardwareInfo = async () => {
   try {
-    const [cpu, mem, graphics, blockDevices, system, battery] = await Promise.all([
-      si.cpu(),
-      si.mem(),
-      si.graphics(),
-      si.blockDevices(),
-      si.system(),
-      si.battery()
-    ]);
+    const [cpu, mem, graphics, blockDevices, system, battery] =
+      await Promise.all([
+        si.cpu(),
+        si.mem(),
+        si.graphics(),
+        si.blockDevices(),
+        si.system(),
+        si.battery(),
+      ]);
 
     const hardwareInfo = {
       CPU: {
-        制造商: cpu.manufacturer,
-        品牌: cpu.brand,
-        型号: cpu.model,
-        核心数: cpu.cores,
-        线程数: cpu.physicalCores,
-        基础频率: formatGHz(cpu.speed),
-        最大频率: formatGHz(cpu.speedMax),
-        缓存: {
-          L1数据: cpu.cache.l1d,
-          L1指令: cpu.cache.l1i,
-          L2: cpu.cache.l2,
-          L3: cpu.cache.l3,
+        manufacturer: cpu.manufacturer,
+        brand: cpu.brand,
+        model: cpu.model,
+        cores: cpu.cores,
+        threads: cpu.physicalCores,
+        baseFrequency: formatGHz(cpu.speed),
+        maxFrequency: formatGHz(cpu.speedMax),
+        cache: {
+          l1Data: cpu.cache.l1d,
+          l1Instruction: cpu.cache.l1i,
+          l2: cpu.cache.l2,
+          l3: cpu.cache.l3,
         },
       },
-      内存: {
-        总容量: `${Math.round(mem.total / 1024 / 1024 / 1024)}GB`,
-        可用容量: `${Math.round(mem.available / 1024 / 1024 / 1024)}GB`,
-        已使用: `${Math.round(mem.used / 1024 / 1024 / 1024)}GB`,
-        使用率: formatPercent((mem.used / mem.total) * 100),
+      memory: {
+        totalCapacity: `${Math.round(mem.total / 1024 / 1024 / 1024)}GB`,
+        availableCapacity: `${Math.round(
+          mem.available / 1024 / 1024 / 1024
+        )}GB`,
+        usedCapacity: `${Math.round(mem.used / 1024 / 1024 / 1024)}GB`,
+        usageRate: formatPercent((mem.used / mem.total) * 100),
       },
-      显卡: graphics.controllers.map((gpu) => ({
-        厂商: gpu.vendor,
-        型号: gpu.model,
-        显存: gpu.vram ? `${gpu.vram}MB` : "未知",
-        驱动版本: gpu.driverVersion,
+      graphics: graphics.controllers.map((gpu) => ({
+        vendor: gpu.vendor,
+        model: gpu.model,
+        vram: gpu.vram ? `${gpu.vram}MB` : "Unknown",
+        driverVersion: gpu.driverVersion,
       })),
-      存储设备: blockDevices.map((device) => ({
-        设备名: device.name,
-        类型: device.type,
-        大小: `${formatBytes(device.size)}GB`,
-        厂商: device.vendor,
-        型号: device.model,
-        序列号: device.serial,
-        是否可移动: device.removable,
+      storageDevices: blockDevices.map((device) => ({
+        deviceName: device.name,
+        type: device.type,
+        size: `${formatBytes(device.size)}GB`,
+        vendor: device.vendor,
+        model: device.model,
+        serialNumber: device.serial,
+        removable: device.removable,
       })),
-      系统序列号: {
-        制造商: system.manufacturer,
-        型号: system.model,
-        版本: system.version,
-        序列号: system.serial,
-        UUID: system.uuid,
+      systemInfo: {
+        manufacturer: system.manufacturer,
+        model: system.model,
+        version: system.version,
+        serialNumber: system.serial,
+        uuid: system.uuid,
       },
-      电池: battery.hasBattery ? {
-        是否充电: battery.isCharging,
-        电量百分比: `${battery.percent}%`,
-        剩余时间: battery.timeRemaining ? `${Math.floor(battery.timeRemaining / 60)}分钟` : "未知",
-        循环次数: battery.cycleCount,
-        健康状态: `${battery.maxCapacity}%`,
-      } : "无电池",
+      battery: battery.hasBattery
+        ? {
+            isCharging: battery.isCharging,
+            batteryLevel: `${battery.percent}%`,
+            remainingTime: battery.timeRemaining
+              ? `${Math.floor(battery.timeRemaining / 60)} minutes`
+              : "Unknown",
+            cycleCount: battery.cycleCount,
+            healthStatus: `${battery.maxCapacity}%`,
+          }
+        : "No battery",
     };
 
-    return createResponse("硬件信息", hardwareInfo);
+    return createResponse("Hardware Information", hardwareInfo);
   } catch (error) {
-    throw new Error(`获取硬件信息失败: ${error.message}`);
+    throw new Error(`Failed to get hardware information: ${error.message}`);
   }
 };
 
 const getSystemStatus = async () => {
   try {
-    const [osInfo, time, mem, currentLoad, networkInterfaces] = await Promise.all([
-      si.osInfo(),
-      si.time(),
-      si.mem(),
-      si.currentLoad(),
-      si.networkInterfaces()
-    ]);
+    const [osInfo, time, mem, currentLoad, networkInterfaces] =
+      await Promise.all([
+        si.osInfo(),
+        si.time(),
+        si.mem(),
+        si.currentLoad(),
+        si.networkInterfaces(),
+      ]);
 
     const systemStatus = {
-      操作系统: {
-        平台: osInfo.platform,
-        发行版: osInfo.distro,
-        版本: osInfo.release,
-        架构: osInfo.arch,
-        主机名: osInfo.hostname,
-        内核: osInfo.kernel,
-        启动时间: new Date(Date.now() - time.uptime * 1000).toLocaleString("zh-CN"),
-        运行时间: `${Math.floor(time.uptime / 3600)}小时 ${Math.floor((time.uptime % 3600) / 60)}分钟`,
-        当前时间: new Date().toLocaleString("zh-CN"),
-        时区: time.timezone,
+      operatingSystem: {
+        platform: osInfo.platform,
+        distribution: osInfo.distro,
+        release: osInfo.release,
+        architecture: osInfo.arch,
+        hostname: osInfo.hostname,
+        kernel: osInfo.kernel,
+        bootTime: new Date(Date.now() - time.uptime * 1000).toLocaleString(
+          "en-US"
+        ),
+        uptime: `${Math.floor(time.uptime / 3600)} hours ${Math.floor(
+          (time.uptime % 3600) / 60
+        )} minutes`,
+        currentTime: new Date().toLocaleString("en-US"),
+        timezone: time.timezone,
       },
-      CPU使用情况: {
-        总使用率: formatPercent(currentLoad.currentLoad),
-        用户进程: formatPercent(currentLoad.currentLoadUser),
-        系统进程: formatPercent(currentLoad.currentLoadSystem),
-        空闲: formatPercent(currentLoad.currentLoadIdle),
+      cpuUsage: {
+        totalUsage: formatPercent(currentLoad.currentLoad),
+        userProcesses: formatPercent(currentLoad.currentLoadUser),
+        systemProcesses: formatPercent(currentLoad.currentLoadSystem),
+        idle: formatPercent(currentLoad.currentLoadIdle),
       },
-      内存使用情况: {
-        总容量: `${formatBytes(mem.total)}GB`,
-        已使用: `${formatBytes(mem.used)}GB`,
-        可用: `${formatBytes(mem.available)}GB`,
-        使用率: formatPercent((mem.used / mem.total) * 100),
-        交换分区: {
-          总容量: `${formatBytes(mem.swaptotal)}GB`,
-          已使用: `${formatBytes(mem.swapused)}GB`,
-          使用率: mem.swaptotal > 0 ? formatPercent((mem.swapused / mem.swaptotal) * 100) : "0%",
+      memoryUsage: {
+        totalCapacity: `${formatBytes(mem.total)}GB`,
+        usedCapacity: `${formatBytes(mem.used)}GB`,
+        availableCapacity: `${formatBytes(mem.available)}GB`,
+        usageRate: formatPercent((mem.used / mem.total) * 100),
+        swapMemory: {
+          totalCapacity: `${formatBytes(mem.swaptotal)}GB`,
+          usedCapacity: `${formatBytes(mem.swapused)}GB`,
+          usageRate:
+            mem.swaptotal > 0
+              ? formatPercent((mem.swapused / mem.swaptotal) * 100)
+              : "0%",
         },
       },
-      网络接口: networkInterfaces
-        .filter(iface => !iface.internal)
+      networkInterfaces: networkInterfaces
+        .filter((iface) => !iface.internal)
         .map((iface) => ({
-          接口名: iface.iface,
-          MAC地址: iface.mac,
-          IPv4地址: iface.ip4,
-          IPv6地址: iface.ip6,
-          类型: iface.type,
-          速度: iface.speed ? `${iface.speed}Mbps` : "未知",
-          状态: iface.operstate,
+          interfaceName: iface.iface,
+          macAddress: iface.mac,
+          ipv4Address: iface.ip4,
+          ipv6Address: iface.ip6,
+          type: iface.type,
+          speed: iface.speed ? `${iface.speed}Mbps` : "Unknown",
+          status: iface.operstate,
         })),
     };
 
-    return createResponse("系统状态", systemStatus);
+    return createResponse("System Status", systemStatus);
   } catch (error) {
-    throw new Error(`获取系统状态失败: ${error.message}`);
+    throw new Error(`Failed to get system status: ${error.message}`);
   }
 };
 
@@ -148,8 +169,9 @@ const setupTools = (server) => {
   server.registerTool(
     "get_hardware_info",
     {
-      title: "获取硬件信息",
-      description: "获取完整的硬件信息（CPU、内存、存储、显卡、电池、序列号）",
+      title: "Get Hardware Information",
+      description:
+        "Get complete hardware information (CPU, memory, storage, graphics, battery, serial numbers)",
     },
     getHardwareInfo
   );
@@ -157,8 +179,9 @@ const setupTools = (server) => {
   server.registerTool(
     "get_system_status",
     {
-      title: "获取系统状态",
-      description: "获取系统状态信息（操作系统、网络接口、CPU和内存使用情况）",
+      title: "Get System Status",
+      description:
+        "Get system status information (operating system, network interfaces, CPU and memory usage)",
     },
     getSystemStatus
   );
@@ -178,10 +201,10 @@ const run = async () => {
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("系统信息MCP服务器已启动...");
+  console.error("System Information MCP Server started...");
 };
 
 run().catch((error) => {
-  console.error("服务器启动失败:", error);
+  console.error("Failed to start server:", error);
   process.exit(1);
 });

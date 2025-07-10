@@ -1,101 +1,68 @@
-## 系统工具
+# System Info Tool
 
-**基于MCP（Model Context Protocol）规范实现的系统信息获取工具**
+**A system information tool based on the MCP (Model Context Protocol) specification**
 
-### 🎯 主要功能
+## 🎯 Features
 
-本项目基于 [Model Context Protocol](https://modelcontextprotocol.io/introduction) 的最新规范实现，提供以下系统信息获取功能：
+This project implements the latest [Model Context Protocol](https://modelcontextprotocol.io/introduction) specification, providing:
 
-- **硬件信息** - 获取完整的硬件信息（CPU、内存、存储、显卡、电池、序列号）
-- **系统状态** - 获取系统状态信息（操作系统、网络接口、CPU和内存使用情况）
+- **Hardware Information** - Complete hardware details (CPU, memory, storage, graphics, battery, serial numbers)
+- **System Status** - System status information (OS, network interfaces, CPU and memory usage)
 
-### 🚀 安装和运行
+## 🚀 Installation & Usage
 
-#### 1. 安装依赖
+### Install Dependencies
 ```bash
-# 使用pnpm（推荐）
+# Using pnpm (recommended)
 pnpm install
 
-# 或使用npm
+# Or using npm
 npm install
 ```
 
-#### 2. 运行MCP服务器
+### Run MCP Server
 ```bash
-# 启动服务器
+# Start server
 npm start
 
-# 或开发模式（自动重启）
+# Or development mode (auto-restart)
 npm run dev
 ```
 
-#### 3. 全局安装（可选）
+### Global Installation (Optional)
 ```bash
 npm link
-# 然后可以直接使用
+# Then use directly
 mcp-system-info
 ```
 
-### 🔧 MCP工具列表
+## 🔧 MCP Tools
 
-服务器提供以下2个精简的MCP工具：
+The server provides 2 streamlined MCP tools:
 
-| 工具名称 | 描述 | 参数 |
-|---------|------|------|
-| `get_hardware_info` | 获取完整的硬件信息（CPU、内存、存储、显卡、电池、序列号） | 无 |
-| `get_system_status` | 获取系统状态信息（操作系统、网络接口、CPU和内存使用情况） | 无 |
+| Tool Name | Description | Parameters |
+|-----------|-------------|------------|
+| `get_hardware_info` | Get complete hardware information | None |
+| `get_system_status` | Get system status and resource usage | None |
 
-### 📝 使用示例
+## 📝 Configuration
 
-#### 在Cursor中配置
+### Cursor Configuration
+Add to your Cursor `settings.json`:
+```json
+{
+  "mcp.servers": {
+    "system-info": {
+      "command": "node",
+      "args": ["/path/to/mcp-node-tool/index.js"],
+      "cwd": "/path/to/mcp-node-tool"
+    }
+  }
+}
+```
 
-1. **打开Cursor Settings**
-   - 按 `Cmd/Ctrl + ,` 打开设置
-   - 或者点击左下角齿轮图标 → Settings
-
-2. **配置MCP设置**
-   - 在设置搜索框中输入 "mcp"
-   - 找到 "Mcp: Servers" 设置项
-   - 点击 "Edit in settings.json"
-
-3. **添加配置**
-   在 `settings.json` 中添加以下配置：
-   ```json
-   {
-     "mcp.servers": {
-       "system-info": {
-         "command": "node",
-         "args": ["/path/to/mcp-node-tool/index.js"],
-         "cwd": "/path/to/mcp-node-tool"
-       }
-     }
-   }
-   ```
-
-   或者如果已全局安装：
-   ```json
-   {
-     "mcp.servers": {
-       "system-info": {
-         "command": "mcp-system-info"
-       }
-     }
-   }
-   ```
-
-4. **重启Cursor**
-   配置完成后重启Cursor以应用更改
-
-5. **使用MCP工具**
-   - 在Cursor中打开AI聊天面板
-   - 现在可以使用自然语言请求系统信息，例如：
-     - "获取当前系统的完整硬件信息"
-     - "显示系统状态和资源使用情况" 
-     - "查看CPU和内存使用率"
-     - "显示网络接口配置"
-
-#### 在Claude Desktop中使用
-在Claude Desktop的配置文件中添加：
+### Claude Desktop Configuration
+Add to Claude Desktop config:
 ```json
 {
   "mcpServers": {
@@ -107,156 +74,36 @@ mcp-system-info
 }
 ```
 
-#### 作为MCP客户端使用
-```javascript
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+## 🧪 Testing
 
-const transport = new StdioClientTransport({
-  command: 'node',
-  args: ['index.js']
-});
-
-const client = new Client({
-  name: 'system-client',
-  version: '1.0.0'
-});
-
-await client.connect(transport);
-
-// 获取硬件信息
-const hardwareInfo = await client.callTool({
-  name: 'get_hardware_info',
-  arguments: {}
-});
-
-// 获取系统状态
-const systemStatus = await client.callTool({
-  name: 'get_system_status',
-  arguments: {}
-});
-```
-
-### 🧪 测试
-
-运行包含的测试脚本来验证功能：
+Run the included test script:
 ```bash
 node test.js
 ```
 
-测试脚本会：
-1. 连接到MCP服务器
-2. 列出所有可用工具（2个精简工具）
-3. 测试硬件信息和系统状态功能
-4. 验证返回数据的格式
+## 📊 Output Format
 
-### 📦 发布和版本管理
-
-#### 开发者发布流程
-
-1. **使用发版脚本（推荐）**
-   ```bash
-   # 发布补丁版本 (2.0.0 -> 2.0.1)
-   npm run release patch
-   
-   # 发布次要版本 (2.0.0 -> 2.1.0)  
-   npm run release minor
-   
-   # 发布主要版本 (2.0.0 -> 3.0.0)
-   npm run release major
-   
-   # 模拟发布（测试打包）
-   npm run release dry
-   ```
-
-2. **手动发布流程**
-   ```bash
-   # 运行测试
-   npm test
-   
-   # 更新版本号
-   npm version patch  # 或 minor/major
-   
-   # 推送到 GitHub（触发自动发布）
-   git push --follow-tags
-   ```
-
-3. **仅发布到 npm**
-   ```bash
-   npm run publish:dry    # 测试打包
-   npm run publish:npm    # 发布到 npm
-   ```
-
-#### GitHub Actions 自动化
-
-项目配置了完整的 CI/CD 流水线：
-
-- **CI 流水线**: 每次 push 和 PR 都会运行测试
-- **发布流水线**: 推送标签时自动发布到 npm 和创建 GitHub Release
-- **手动发布**: 通过 GitHub Actions 界面手动触发发布
-
-#### 发布前检查
-
-发版脚本会自动检查：
-- 是否在 main 分支
-- 工作区是否干净（无未提交更改）
-- 是否与远程分支同步
-- 测试是否通过
-
-### 📊 安装和使用
-
-#### 从 npm 安装
-```bash
-# 全局安装
-npm install -g mcp-node-tool
-
-# 或本地项目安装
-npm install mcp-node-tool
-```
-
-#### 从 GitHub Releases 下载
-访问 [Releases 页面](https://github.com/ryan/mcp-node-tool/releases) 下载最新版本。
-
-### 📊 输出格式
-
-所有工具返回结构化的JSON数据，格式如下：
-
+All tools return structured JSON data:
 ```json
 {
   "content": [
     {
-      "type": "text",
-      "text": "# 信息标题\n\n```json\n{数据内容}\n```"
+      "type": "text", 
+      "text": "# Information Title\n\n```json\n{data}\n```"
     }
   ]
 }
 ```
 
-### 🔒 安全考虑
+## 🔒 Security
 
-- 服务器仅提供**只读**系统信息访问
-- 不执行任何系统修改操作
-- 所有数据通过结构化JSON格式返回
-- 遵循MCP安全最佳实践
+- **Read-only** system information access
+- No system modification operations
+- Structured JSON data format
+- Follows MCP security best practices
 
-### 📚 技术栈
-
-- **MCP SDK**: [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
-- **系统信息**: [systeminformation](https://www.npmjs.com/package/systeminformation)
-- **Schema验证**: [zod](https://www.npmjs.com/package/zod)
-- **运行时**: Node.js 18+
-
-### 🔗 相关链接
-
-- [Model Context Protocol 官方文档](https://modelcontextprotocol.io/introduction)
-- [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
-- [MCP 规范](https://modelcontextprotocol.io/specification/2025-06-18)
-- [Cursor编辑器](https://cursor.sh/)
-
-### 📄 许可证
+## 📄 License
 
 ISC
 
-### 🤝 贡献
-
-欢迎提交Issue和Pull Request来改进这个工具！
+Welcome to submit Issues and Pull Requests to improve this tool!
